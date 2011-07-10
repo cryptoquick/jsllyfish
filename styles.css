@@ -1,5 +1,5 @@
 body, html {
-	background-color: #666;
+	background-color: #ffcd32;
 	margin: 0px;
 	padding: 5px;
 	height: 100%;
@@ -10,7 +10,7 @@ p {margin: 0px;}
 .header {
 	float: left;
 	width: 160px;
-	background-color: #444;
+	background-color: #ffa218;
 	margin: 0px;
 	padding: 5px 10px;
 	border-radius: 10px;
@@ -20,9 +20,9 @@ p {margin: 0px;}
 	height: 150px;
 	width: 150px;
 	float: left;
-	background-color: #222;
+	background-color: #ffcd32;
 	margin: 5px 0px;
-	border: 5px solid #222;
+	border: 5px solid #ffcd32;
 	border-radius: 5px;
 }
 
@@ -65,7 +65,7 @@ p {margin: 0px;}
 }
 
 #content {
-	background-color: #333;
+	background-color: #ffa218;
 	margin: 0px;
 	width: 50%;
 	position: fixed;
