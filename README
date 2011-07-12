@@ -1,3 +1,7 @@
 USAGE
 Replace the data.html file with: ls -p > data.html (Mac / Linux) -or- dir /B > data.html (Windows)
 Please note that these files must be placed on a web server in order to work-- Most browsers do not run JavaScript locally.
+
+IMAGES
+Attribution for these images goes to stefg74 on flickr:
+http://www.flickr.com/photos/stg_gr1/
