@@ -2,22 +2,28 @@ window.addEventListener('load', function () {
 	Init();
 }, false);
 
-window.addEventListener('resize', function () {
-	Resize();
-}, false);
+if( window.addEventListener ) {
+	window.addEventListener('resize', Resize, false);
+} else if( document.addEventListener ) {
+	document.addEventListener('resize', Resize, false);
+}
 
 window.addEventListener('click', function (evt) {
 	Click(evt);
 }, false);
 
-window.addEventListener('scroll', function (evt) {
-	Scroll(evt);
-}, false);
+if( window.addEventListener ) {
+	window.addEventListener('scroll', Scroll, false);
+} else if( document.addEventListener ) {
+	document.addEventListener('scroll', Scroll, false);
+}
 
 var container;
 
-// ls -p > img.txt
-var path = "/fp/"
+// ls -p > img.html
+// dir /B > img.html
+var filename = "img.html";
+var path = "images/"
 var head, content, desc;
 var curTop = 0;
 var curImg;
@@ -30,11 +36,11 @@ var thumbshigh = 0;
 
 function Init () {
 	container = document.getElementById("container");
-	makeXHR("GET", "img.html", null, LoadImages);
+	makeXHR("GET", filename, null, LoadImages);
 }
 
 function Init2() {
-	thumbshigh = Math.ceil((document.body.clientHeight - 10) / thumbheight);
+	thumbshigh = Math.ceil((window.innerHeight - 10) / thumbheight);
 	head = new Header(0);
 	head.init();
 	content = new Content();
@@ -44,7 +50,7 @@ function Init2() {
 
 function Resize () {
 	content.size();
-	thumbshigh = Math.ceil((document.body.clientHeight - 10) / thumbheight);
+	thumbshigh = Math.ceil((window.innerHeight - 10) / thumbheight);
 }
 
 function Click (evt) {
@@ -155,8 +161,14 @@ var Content = function () {
 var changeImg = false;
 
 function Scroll (evt) {
-	var elid = document.elementFromPoint(50, 25).id;
-	console.log(elid);
+	// Used to make iOS work. (No position: fixed!!!)
+	var mobileOffset = 0;
+	if (DetectIos()) {
+		mobileOffset = window.pageYOffset;
+		content.div.style.top = (window.pageYOffset + 25) + 'px';
+	}
+	
+	var elid = document.elementFromPoint(50, mobileOffset + 25).id;
 	// Image still at top
 	if (elid == "image" + curTop || elid == "thumb" + curTop) {
 		changeImg = false;
@@ -236,7 +248,7 @@ function updateHeader () {
 function LoadImages (data) {
 	var output = data.split("\n");
 	for (var i = 0, ii = output.length; i < ii; i++) {
-		if (output[i].substr(-1,1) != "/") {
+		if (output[i].substr(-1,1) != "/" && output[i] != "") {
 			images.push({img: path + output[i], title: output[i]});
 		}
 	}
