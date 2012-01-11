@@ -5,33 +5,34 @@ var curTop = 0;
 var curImg;
 var images = [];
 var imgIDs = {};
-var thumbheight = 170;
+var thumbheight = 160;
 var thumbshigh = 0; // How many thumbnails high the window allows
 var visible = []; //9,10,11,12,13,14,15]; // Thumbs that are available in the header window.
 var thumbshigh = 0;
-
-/*function Init () {
-//	$(window).resize(Resize);
-//	$(window).scroll(Scroll);
-//	$(window).click(Click);
-//	makeXHR("GET", filename, null, LoadImages);
-	
-	Init2();
-}*/
+var headerHeight = 0;
+var activeHeader = 0;
 
 function Init() {
-	LoadImages();
-	thumbshigh = Math.ceil((window.innerHeight - 10) / thumbheight);
-	head = new Header(0);
+	$(window).resize(Resize);
+	$(window).scroll(Scroll);
+	$(window).click(Click);
+	
+	LoadImageData();
+	
+	// Page height-related stuffs... TODO explain more
+	headerHeight += $(window).height() + thumbheight * images.length;
+	thumbshigh = Math.ceil(($(window).height() - 10) / thumbheight);
+	
+	head = new Header(activeHeader);
 	head.init();
 	content = new Content();
 	content.init();
-	curImg = document.getElementById("image" + curTop);
+	curImg = $("#image_" + curTop);
 }
 
 function Resize () {
 	content.size();
-	thumbshigh = Math.ceil((window.innerHeight - 10) / thumbheight);
+	thumbshigh = Math.ceil(($(window).height() - 10) / thumbheight);
 }
 
 function Click (evt) {
@@ -52,6 +53,7 @@ var Header = function (num) {
 		var d = $('<div>');
 		d.attr('id', this.div);
 		d.addClass('header');
+		d.css('height', headerHeight + 'px');
 		$('#container').prepend(d);
 		this.fill();
 		
@@ -60,84 +62,62 @@ var Header = function (num) {
 			head.addimg(i);
 		}
 	}
-	/*
-	this.createthumb = function (idnum) {
-		var sp = $('span');
-		var pp = $('p');
-		var p = $('p');
-		
-		pp.attr('id', 'imagep' + idnum);
-		sp.append(pp);
-		
-		p.addClass('thumb');
-		p.attr('id', 'thumb' + idnum);
-		p.append(sp);
-		
-		$(this.div).append(p);
-	}*/
 	
 	this.fill = function () {
 		for (var i = 0, ii = images.length; i < ii; i++) {
 			// Create each thumb element.
-		//	this.createthumb(i);
 			var p = $('<p>').attr('id', 'thumb_' + i).addClass('thumb');
 			$("#" + this.div).append(p);
 			
 			// Add to the imgIDs dictionary.
-			imgIDs["image" + i] = i;
+			imgIDs["image_" + i] = i;
 		}
 	}
 	
 	this.addimg = function (idnum) {
-		var img = document.createElement('img');
-		img.src = path + images[idnum].path;
-		img.className = 'thumbimg';
-		img.id = "image" + idnum;
-		$("imagep" + idnum).append(img);
+		var img = $('<img>').attr('id', "image_" + idnum);
+		img.attr('src', path + images[idnum].path);
+		img.addClass('thumbimg');
+		$("#thumb_" + idnum).append(img);
+		console.log();
 	}
 	
 	this.removeimg = function (idnum) {
-		var id = "image" + idnum;
+		var id = "image_" + idnum;
 		var par = document.getElementById(id).parentNode;
 		par.removeChild(par.firstChild);
 	}
 }
 
 var Content = function () {
-	this.div;
 	this.img;
 	
 	this.init = function () {
-		this.div = $("content");
 		this.size();
-	//	this.setImage(0);
+		this.setImage(0);
 	}
 	
 	this.size = function () {
-		this.div.css('height', $(window).height() - 30) + 'px';
-		this.div.css('width', $(window).width() - 200) + 'px';
+		$('#content').css('height', ($(window).height() - 30));
+		$('#content').css('width', ($(window).width() - 200));
+		$('#content').css('margin-top', -Math.floor(($(window).height() - 30) / 2));
+		$('#content').css('top', '50%');
+		$('#content img').css('max-height', $('#content').height());
+		$('#content img').css('max-width', $('#content').width());
 	}
 	
 	this.setImage = function (index) {
 		if (images.length > 0) {
-			var ch = this.div.childNodes[0];
-			this.div.removeChild(ch);
+			$('#content').empty();
 			
-			var img = document.createElement('img');
-			img.src = path + images[index].path;
-			img.style.maxHeight = this.div.style.height;
-			img.style.maxWidth = this.div.style.width;
-			img.title = images[index].title;
-		
-			var sp = document.createElement('span');
-			var pp = document.createElement('p');
-		
-			var p = document.createElement('p');
-		
-			pp.appendChild(img);
-			sp.appendChild(pp);
+			var img = $('<img>');
+			img.attr('src', path + images[index].path);
+			img.attr('title', images[index].title);
 			
-			this.div.appendChild(sp);
+			img.css('max-height', $('#content').height());
+			img.css('max-width', $('#content').width());
+			
+			$('#content').append(img);
 		}
 	}
 }
@@ -154,23 +134,23 @@ function Scroll (evt) {
 	
 	var elid = document.elementFromPoint(50, mobileOffset + 25).id;
 	// Image still at top
-	if (elid == "image" + curTop || elid == "thumb" + curTop) {
+	if (elid == "image_" + curTop || elid == "thumb" + curTop) {
 		changeImg = false;
 	}
 	// User scrolled down
-	else if (elid == "image" + (curTop + 1) || elid == "thumb" + (curTop + 1)) {
+	else if (elid == "image_" + (curTop + 1) || elid == "thumb" + (curTop + 1)) {
 		curTop++;
 		changeImg = true;
 	}
 	// User scrolled up
-	else if (elid == "image" + (curTop - 1) || elid == "thumb" + (curTop - 1)) {
+	else if (elid == "image_" + (curTop - 1) || elid == "thumb" + (curTop - 1)) {
 		curTop--;
 		changeImg = true;
 	}
 	// User scrolled fast!
-	else if (elid != "image" + curTop || elid != "thumb" + curTop) {
+	else if (elid != "image_" + curTop || elid != "thumb" + curTop) {
 		for (var i = 0, ii = images.length; i < ii; i++) {
-			if (elid == "image" + i || elid == "thumb" + i) {
+			if (elid == "image_" + i || elid == "thumb" + i) {
 				curTop = i;
 				changeImg = true;
 				break;
@@ -229,7 +209,7 @@ function updateHeader () {
 	console.log(visible);
 }
 
-function LoadImages () {
+function LoadImageData () {
 	// For every category div in #data...
 	$('#data div').each(function() {
 		// get its category name...
