@@ -1,29 +1,5 @@
-window.addEventListener('load', function () {
-	Init();
-}, false);
-
-if( window.addEventListener ) {
-	window.addEventListener('resize', Resize, false);
-} else if( document.addEventListener ) {
-	document.addEventListener('resize', Resize, false);
-}
-
-window.addEventListener('click', function (evt) {
-	Click(evt);
-}, false);
-
-if( window.addEventListener ) {
-	window.addEventListener('scroll', Scroll, false);
-} else if( document.addEventListener ) {
-	document.addEventListener('scroll', Scroll, false);
-}
-
-var container;
-
 // ls -p > img.html
 // dir /B > img.html
-var filename = "img.html";
-var path = "images/"
 var head, content, desc;
 var curTop = 0;
 var curImg;
@@ -34,12 +10,17 @@ var thumbshigh = 0; // How many thumbnails high the window allows
 var visible = []; //9,10,11,12,13,14,15]; // Thumbs that are available in the header window.
 var thumbshigh = 0;
 
-function Init () {
-	container = document.getElementById("container");
-	makeXHR("GET", filename, null, LoadImages);
-}
+/*function Init () {
+//	$(window).resize(Resize);
+//	$(window).scroll(Scroll);
+//	$(window).click(Click);
+//	makeXHR("GET", filename, null, LoadImages);
+	
+	Init2();
+}*/
 
-function Init2() {
+function Init() {
+	LoadImages();
 	thumbshigh = Math.ceil((window.innerHeight - 10) / thumbheight);
 	head = new Header(0);
 	head.init();
@@ -61,55 +42,58 @@ function Click (evt) {
 }
 
 var Header = function (num) {
-	this.num = num;
-	this.div;
+	this.div = 'head_' + num;
 	
 	this.icons = [
 		
 	];
 	
 	this.init = function () {
-		this.div = document.createElement("div");
-		this.div.id = "header" + num;
-		this.div.className = "header";
-	//	this.populate();
+		var d = $('<div>');
+		d.attr('id', this.div);
+		d.addClass('header');
+		$('#container').prepend(d);
 		this.fill();
-		container.appendChild(this.div);
 		
 		for (var i = 0, ii = thumbshigh; i < ii; i++) {
 			visible.push(i);
 			head.addimg(i);
 		}
 	}
-	
+	/*
 	this.createthumb = function (idnum) {
-		var sp = document.createElement('span');
-		var pp = document.createElement('p');
-		var p = document.createElement('p');
+		var sp = $('span');
+		var pp = $('p');
+		var p = $('p');
 		
-		pp.id = 'imagep' + idnum;
-		sp.appendChild(pp);
+		pp.attr('id', 'imagep' + idnum);
+		sp.append(pp);
 		
-		p.className = 'thumb';
-		p.id = 'thumb' + idnum;
-		p.appendChild(sp);
+		p.addClass('thumb');
+		p.attr('id', 'thumb' + idnum);
+		p.append(sp);
 		
-		this.div.appendChild(p);
-	}
+		$(this.div).append(p);
+	}*/
 	
 	this.fill = function () {
 		for (var i = 0, ii = images.length; i < ii; i++) {
-			this.createthumb(i);
+			// Create each thumb element.
+		//	this.createthumb(i);
+			var p = $('<p>').attr('id', 'thumb_' + i).addClass('thumb');
+			$("#" + this.div).append(p);
+			
+			// Add to the imgIDs dictionary.
 			imgIDs["image" + i] = i;
 		}
 	}
 	
 	this.addimg = function (idnum) {
 		var img = document.createElement('img');
-		img.src = images[idnum].img;
+		img.src = path + images[idnum].path;
 		img.className = 'thumbimg';
 		img.id = "image" + idnum;
-		document.getElementById("imagep" + idnum).appendChild(img);
+		$("imagep" + idnum).append(img);
 	}
 	
 	this.removeimg = function (idnum) {
@@ -124,14 +108,14 @@ var Content = function () {
 	this.img;
 	
 	this.init = function () {
-		this.div = document.getElementById("content");
+		this.div = $("content");
 		this.size();
-		this.setImage(0);
+	//	this.setImage(0);
 	}
 	
 	this.size = function () {
-		this.div.style.height = (document.body.clientHeight - 30) + 'px';
-		this.div.style.width = ((document.body.clientWidth) - 200) + 'px';
+		this.div.css('height', $(window).height() - 30) + 'px';
+		this.div.css('width', $(window).width() - 200) + 'px';
 	}
 	
 	this.setImage = function (index) {
@@ -140,7 +124,7 @@ var Content = function () {
 			this.div.removeChild(ch);
 			
 			var img = document.createElement('img');
-			img.src = images[index].img;
+			img.src = path + images[index].path;
 			img.style.maxHeight = this.div.style.height;
 			img.style.maxWidth = this.div.style.width;
 			img.title = images[index].title;
@@ -245,13 +229,16 @@ function updateHeader () {
 	console.log(visible);
 }
 
-function LoadImages (data) {
-	var output = data.split("\n");
-	for (var i = 0, ii = output.length; i < ii; i++) {
-		if (output[i].substr(-1,1) != "/" && output[i] != "") {
-			images.push({img: path + output[i], title: output[i]});
-		}
-	}
-	
-	Init2();
+function LoadImages () {
+	// For every category div in #data...
+	$('#data div').each(function() {
+		// get its category name...
+		var cat = $('> span', this).text();
+		// for every cat, push the rest of the information held in each span.
+		$('> p' , this).each(function () {
+			var path = cat + '/' + $(this).text();
+			var title = $('.title', this).text();
+			images.push({cat: cat, path: path, title: title, info: "blaarbl"});
+		});
+	});
 }
