@@ -79,14 +79,15 @@ var Header = function (num) {
 		img.attr('src', path + images[idnum].path);
 		img.addClass('thumbimg');
 		$("#thumb_" + idnum).append(img);
-		console.log();
+		console.log(idnum + " added");
 	}
-	
+	/*
 	this.removeimg = function (idnum) {
 		var id = "image_" + idnum;
 		var par = document.getElementById(id).parentNode;
 		par.removeChild(par.firstChild);
-	}
+		console.log(idnum + " removed");
+	}	*/
 }
 
 var Content = function () {
@@ -126,32 +127,35 @@ var Content = function () {
 var changeImg = false;
 
 function Scroll (evt) {
-	// Used to make iOS work. (No position: fixed!!!)
+	console.log($(":in-viewport.thumb").attr('id'));
+	
+	var topThumb = $(":in-viewport.thumb").attr('id');
+
+/*	// Used to make iOS work. (No position: fixed!!!)
 	var mobileOffset = 0;
 	if (DetectIos()) {
 		mobileOffset = window.pageYOffset;
 		content.div.style.top = (window.pageYOffset + 25) + 'px';
-	}
+	}	*/
 	
-	var elid = document.elementFromPoint(50, mobileOffset + 25).id;
 	// Image still at top
-	if (elid == "image_" + curTop || elid == "thumb" + curTop) {
+	if (topThumb == "thumb_" + curTop) {
 		changeImg = false;
 	}
 	// User scrolled down
-	else if (elid == "image_" + (curTop + 1) || elid == "thumb" + (curTop + 1)) {
+	else if (topThumb == "thumb_" + (curTop + 1)) {
 		curTop++;
 		changeImg = true;
 	}
 	// User scrolled up
-	else if (elid == "image_" + (curTop - 1) || elid == "thumb" + (curTop - 1)) {
+	else if (topThumb == "thumb_" + (curTop - 1)) {
 		curTop--;
 		changeImg = true;
 	}
 	// User scrolled fast!
-	else if (elid != "image_" + curTop || elid != "thumb" + curTop) {
+	else if (topThumb != "thumb_" + curTop) {
 		for (var i = 0, ii = images.length; i < ii; i++) {
-			if (elid == "image_" + i || elid == "thumb" + i) {
+			if (topThumb == "thumb_" + i) {
 				curTop = i;
 				changeImg = true;
 				break;
@@ -180,6 +184,7 @@ function updateHeader () {
 	var downwards = false;
 	var upwards = false;
 	
+	// Expand header thumb list.
 	for(var i = 0, ii = visible.length; i < ii; i++) {
 		if (maximg > last) {
 			downwards = true;
@@ -189,23 +194,28 @@ function updateHeader () {
 		}
 	}
 	
+	// If going down, add images.
 	if (downwards) {
 		for(var j = last, jj = maximg; j < jj; j++) {
-			head.removeimg(visible.shift());
+			visible.shift(); // head.removeimg(visible.shift());
 			head.addimg(j + 1);
 			visible.push(j + 1);
 		}
 		downwards = false;
 	}
 	
+	// If going up... Well, it needs to keep track of this.
 	if (upwards) {
 		for(var j = first, jj = minimg; j > jj; j--) {
-			head.removeimg(visible.pop());
+			visible.pop(); // head.removeimg(visible.pop());
 			visible.unshift(j - 1);
 			head.addimg(j - 1);
 		}
 		upwards = false;
 	}
+	
+	// Make sure there's something on the bottom.
+	// TODO
 	
 	console.log(visible);
 }
