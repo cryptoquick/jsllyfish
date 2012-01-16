@@ -8,20 +8,19 @@
 	<script type="text/javascript" src="js/base64.js"></script>
 	<script type="text/javascript" src="js/editor.js"></script>
 	<script type="text/javascript">
-		var path = "images/";
-		var filename = "data.html";
-		
 		$(document).ready(Edit);
 	</script>
-	<link href="styles/dark.css" rel="stylesheet" type="text/css">
+	<link href="styles/edit.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div id="container">
 	<div id="dropzone">
-		
+		<form>
+			<input type="file" id="fileinput" name="files" onchange="processFiles()" multiple>Drag Image Folders Here</input>
+		</form>
 	</div>
-	<div id="content"><p>No images in this gallery.</p></div>
-	<div id="pusher"></div>
+	<div id="filelist"><span>File List</span></div>
+	<div id="generate">Generate Thumbs and Gallery Index</div>
 </div>
 </body>
 </html>

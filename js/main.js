@@ -39,6 +39,7 @@ function Click (evt) {
 	if (evt.target.className == 'thumb' || evt.target.className == 'thumbimg') {
 		console.log(imgIDs[evt.target.id]);
 		content.setImage(imgIDs[evt.target.id]);
+		document.location.href = '#' + evt.target.id;
 	}
 }
 
@@ -89,12 +90,12 @@ var Header = function (num) {
 		img.addClass('thumbimg');
 		$('#thumb_' + idnum).append(img);
 		
-		console.log(idnum + ' added');
+		// console.log(idnum + ' added');
 	}
 	
 	this.addcat = function (catname, i) {
 		var div = $('<div>').attr('id', catname);
-		div.text(catname);
+		div.text(catname.replace('_', ' '));
 		div.addClass('thumbcat');
 		
 		// Makes it so when a category button is clicked, the content image is changed to the first image in the category.
@@ -102,7 +103,7 @@ var Header = function (num) {
 		
 		$('#' + this.div).append(div);
 		
-		console.log(catname);
+		// console.log(catname);
 	}
 	/*
 	this.removeimg = function (idnum) {
@@ -129,11 +130,13 @@ var Content = function () {
 	//	$('#content img').css('top', '50%'); 
 		$('#content img').css('max-height', $('#content').height());
 		$('#content img').css('max-width', $('#content').width());
+		
+		$('#selector').css('width', $('#content').width());
 	}
 	
 	this.setImage = function (index) {
 		if (images.length > 0) {
-			$('#content').empty();
+			$('#content > img').remove();
 			
 			var img = $('<img>');
 			img.attr('src', path + images[index].path);
@@ -143,6 +146,9 @@ var Content = function () {
 			img.css('max-width', $('#content').width());
 			
 			$('#content').append(img);
+			
+			// Set title to that image name.
+			$('#title').text(images[index].title);
 		}
 	}
 }
@@ -248,7 +254,7 @@ function LoadImageData () {
 		var cat = $('> span', this).text();
 		// for every cat, push the rest of the information held in each span.
 		$('> p' , this).each(function () {
-			var path = cat + '/' + $(this).text();
+			var path = $('.file', this).text();
 			var title = $('.title', this).text();
 			images.push({cat: cat, path: path, title: title, info: "blaarbl"});
 		});

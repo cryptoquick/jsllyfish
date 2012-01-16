@@ -9,6 +9,11 @@ body, html {
 
 p {margin: 0px;}
 
+a {
+	color: white;
+	text-decoration: none;
+}
+
 #data {
 	display: none;
 }
@@ -33,18 +38,22 @@ p {margin: 0px;}
 	max-height: 150px;
 	max-width: 150px;
 	border-radius: 5px;
+	cursor: pointer;
 }
 
 .thumbcat {
 	float: left;
 	width: 150px;
 	text-align: center;
+	padding: 5px 0px;
 }
 
 #mainImage {
 	margin: 5px 0px;
 	border: 5px solid #222;
 	border-radius: 5px;
+	float: center;
+	clear: center;
 }
 
 #content {
@@ -56,6 +65,15 @@ p {margin: 0px;}
 
 #content img {
 	border-radius: 10px;
+}
+
+#title {
+	display: block;
+	font-weight: bold;
+	padding: 0px;
+	margin-top: -35px;
+	margin-bottom: 15px;
+	float: center;
 }
 
 #description {
@@ -79,9 +97,10 @@ p {margin: 0px;}
 }
 
 #selector {
-	position: absolute;
+	position: fixed;
 	top: 0px;
 	left: 190px;
+	text-align: center;
 }
 
 #selector a {
