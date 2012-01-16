@@ -136,19 +136,21 @@ var Content = function () {
 	
 	this.setImage = function (index) {
 		if (images.length > 0) {
-			$('#content > img').remove();
-			
-			var img = $('<img>');
-			img.attr('src', path + images[index].path);
-			img.attr('title', images[index].title);
-			
-			img.css('max-height', $('#content').height());
-			img.css('max-width', $('#content').width());
-			
-			$('#content').append(img);
-			
-			// Set title to that image name.
-			$('#title').text(images[index].title);
+			$('#content > img').fadeOut('fast', function () {
+				$(this).remove()
+				
+				var img = $('<img>');
+				img.attr('src', path + images[index].path);
+				img.attr('title', images[index].title);
+				
+				img.css('max-height', $('#content').height());
+				img.css('max-width', $('#content').width());
+				
+				$('#content').append(img);
+				
+				// Set title to that image name.
+				$('#title').text(images[index].title);
+			});
 		}
 	}
 }
