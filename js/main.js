@@ -1,8 +1,5 @@
-// ls -p > img.html
-// dir /B > img.html
 var head, content, desc;
 var curTop = 0;
-var curImg;
 var images = [];
 var imgIDs = {};
 var thumbheight = 170;
@@ -27,7 +24,6 @@ function Init() {
 	content = new Content();
 	head.init();
 	content.init();
-	curImg = $("#image_" + curTop);
 }
 
 function Resize () {
@@ -75,17 +71,28 @@ var Header = function (num) {
 			
 			// Create each thumb element.
 			var p = $('<p>').attr('id', 'thumb_' + i).addClass('thumb');
+			
+			// Use this shadow technique: http://webdesignerwall.com/tutorials/css3-rounded-image-with-jquery
+			p.css('height', 130);
+			p.css('width', 130);
+			p.css('background-image', 'url("images/' + images[i].path + '")'); // thumbs TODO
+			p.css('background-repeat', 'no-repeat');
+			p.css('background-attachment', 'center');
+			p.css('background-position', 'center');
+			p.css('border-radius', '10px');
+			p.css('box-shadow', 'inset 0 2px 5px rgba(0, 0, 0, .5), 0 2px 0 rgba(63, 63, 63, .9), 0 -1px 0 rgba(0, 0, 0, .6)');
+			
 			$('#' + this.div).append(p);
 			
-			head.addimg(i);
+		//	head.addimg(i);
 			
 			// Add to the imgIDs dictionary.
-			imgIDs["image_" + i] = i;
+			imgIDs["thumb_" + i] = i;
 		}
 	}
 	
 	this.addimg = function (idnum) {
-		var img = $('<img>').attr('id', "image_" + idnum);
+		var img = $('<img>').attr('id', "thumb_" + idnum);
 		img.attr('src', path + images[idnum].path);
 		img.addClass('thumbimg');
 		$('#thumb_' + idnum).append(img);
@@ -107,7 +114,7 @@ var Header = function (num) {
 	}
 	/*
 	this.removeimg = function (idnum) {
-		var id = "image_" + idnum;
+		var id = "thumb_" + idnum;
 		var par = document.getElementById(id).parentNode;
 		par.removeChild(par.firstChild);
 		console.log(idnum + " removed");
@@ -134,6 +141,9 @@ var Content = function () {
 		$('#selector').css('width', $('#content').width());
 	}
 	
+	this.lastSelectorCat = '';
+	this.lastThumbIndex = 0;
+	
 	this.setImage = function (index) {
 		if (images.length > 0) {
 			$('#content > img').fadeOut('fast', function () {
@@ -150,6 +160,20 @@ var Content = function () {
 				
 				// Set title to that image name.
 				$('#title').text(images[index].title);
+				
+				// Set category button highlight if necessary.
+				var cat = images[index].cat;
+				
+				if (cat != head.lastSelectorCat) {
+					$('a[href$="#' + cat + '"]').addClass('selOn');
+					$('a[href$="#' + head.lastSelectorCat + '"]').removeClass('selOn');
+					head.lastSelectorCat = cat;
+				}
+				
+				// Highlight thumbnail.
+				$('#thumb_' + index).addClass('thumbOn');
+				$('#thumb_' + head.lastThumbIndex).removeClass('thumbOn');
+				head.lastThumbIndex = index;
 			});
 		}
 	}
@@ -157,34 +181,28 @@ var Content = function () {
 
 var changeImg = false;
 
-function Scroll (evt) {
-	var topThumb = $(":in-viewport.thumb").attr('id');
-
-/*	// Used to make iOS work. (No position: fixed!!!)
-	var mobileOffset = 0;
-	if (DetectIos()) {
-		mobileOffset = window.pageYOffset;
-		content.div.style.top = (window.pageYOffset + 25) + 'px';
-	}	*/
+function Scroll () {
+	// Use jQuery viewport script to determine which thumb is in the viewport.
+	var topThumb = parseInt($(":in-viewport.thumb").attr('id').substr(6));
 	
 	// Image still at top
-	if (topThumb == "thumb_" + curTop) {
+	if (topThumb == curTop) {
 		changeImg = false;
 	}
 	// User scrolled down
-	else if (topThumb == "thumb_" + (curTop + 1)) {
+	else if (topThumb == (curTop + 1)) {
 		curTop++;
 		changeImg = true;
 	}
 	// User scrolled up
-	else if (topThumb == "thumb_" + (curTop - 1)) {
+	else if (topThumb == (curTop - 1)) {
 		curTop--;
 		changeImg = true;
 	}
 	// User scrolled fast!
-	else if (topThumb != "thumb_" + curTop) {
+	else if (topThumb != curTop) {
 		for (var i = 0, ii = images.length; i < ii; i++) {
-			if (topThumb == "thumb_" + i) {
+			if (topThumb == i) {
 				curTop = i;
 				changeImg = true;
 				break;
