@@ -5,7 +5,7 @@ var curTop = 0;
 var curImg;
 var images = [];
 var imgIDs = {};
-var thumbheight = 160;
+var thumbheight = 170;
 var thumbshigh = 0; // How many thumbnails high the window allows
 var visible = []; //9,10,11,12,13,14,15]; // Thumbs that are available in the header window.
 var thumbshigh = 0;
@@ -100,8 +100,9 @@ var Content = function () {
 	this.size = function () {
 		$('#content').css('height', ($(window).height() - 30));
 		$('#content').css('width', ($(window).width() - 200));
-		$('#content').css('margin-top', -Math.floor(($(window).height() - 30) / 2));
-		$('#content').css('top', '50%');
+	//	Couldn't get this to vertically-center the image. Not sure if that's desired, anyway.
+	//	$('#content img').css('margin-top', -Math.floor(($(window).height() - 30) / 2));
+	//	$('#content img').css('top', '50%'); 
 		$('#content img').css('max-height', $('#content').height());
 		$('#content img').css('max-width', $('#content').width());
 	}
