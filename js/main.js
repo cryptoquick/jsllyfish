@@ -24,8 +24,8 @@ function Init() {
 	thumbshigh = Math.ceil(($(window).height() - 10) / thumbheight);
 	
 	head = new Header(activeHeader);
-	head.init();
 	content = new Content();
+	head.init();
 	content.init();
 	curImg = $("#image_" + curTop);
 }
@@ -45,29 +45,38 @@ function Click (evt) {
 var Header = function (num) {
 	this.div = 'head_' + num;
 	
-	this.icons = [
-		
-	];
-	
 	this.init = function () {
 		var d = $('<div>');
 		d.attr('id', this.div);
 		d.addClass('header');
 		d.css('height', headerHeight + 'px');
 		$('#container').prepend(d);
+		
+		// Populate full header with thumbs.
 		this.fill();
 		
-		for (var i = 0, ii = thumbshigh; i < ii; i++) {
+	/*	for (var i = 0, ii = thumbshigh; i < ii; i++) {
 			visible.push(i);
 			head.addimg(i);
-		}
+		}	*/
 	}
+	
+	this.lastcat = '';
 	
 	this.fill = function () {
 		for (var i = 0, ii = images.length; i < ii; i++) {
+			// Add category when appropriate.
+			var curcat = images[i].cat;
+			if (head.lastcat != curcat) {
+				head.addcat(curcat, i);
+				head.lastcat = curcat;
+			}
+			
 			// Create each thumb element.
 			var p = $('<p>').attr('id', 'thumb_' + i).addClass('thumb');
-			$("#" + this.div).append(p);
+			$('#' + this.div).append(p);
+			
+			head.addimg(i);
 			
 			// Add to the imgIDs dictionary.
 			imgIDs["image_" + i] = i;
@@ -78,8 +87,22 @@ var Header = function (num) {
 		var img = $('<img>').attr('id', "image_" + idnum);
 		img.attr('src', path + images[idnum].path);
 		img.addClass('thumbimg');
-		$("#thumb_" + idnum).append(img);
-		console.log(idnum + " added");
+		$('#thumb_' + idnum).append(img);
+		
+		console.log(idnum + ' added');
+	}
+	
+	this.addcat = function (catname, i) {
+		var div = $('<div>').attr('id', catname);
+		div.text(catname);
+		div.addClass('thumbcat');
+		
+		// Makes it so when a category button is clicked, the content image is changed to the first image in the category.
+		$('a[href$="#' + catname + '"]').click(function() {(content.setImage(i));});
+		
+		$('#' + this.div).append(div);
+		
+		console.log(catname);
 	}
 	/*
 	this.removeimg = function (idnum) {
@@ -99,7 +122,7 @@ var Content = function () {
 	}
 	
 	this.size = function () {
-		$('#content').css('height', ($(window).height() - 30));
+		$('#content').css('height', ($(window).height() - 60));
 		$('#content').css('width', ($(window).width() - 200));
 	//	Couldn't get this to vertically-center the image. Not sure if that's desired, anyway.
 	//	$('#content img').css('margin-top', -Math.floor(($(window).height() - 30) / 2));
@@ -127,8 +150,6 @@ var Content = function () {
 var changeImg = false;
 
 function Scroll (evt) {
-	console.log($(":in-viewport.thumb").attr('id'));
-	
 	var topThumb = $(":in-viewport.thumb").attr('id');
 
 /*	// Used to make iOS work. (No position: fixed!!!)
@@ -165,11 +186,10 @@ function Scroll (evt) {
 	
 	if (changeImg) {
 		content.setImage(curTop);
-		updateHeader();
 		changeImg = false;
 	}
 }
-
+/*
 var minimg = 0;
 var maximg = 0;
 var first = 0;
@@ -219,6 +239,7 @@ function updateHeader () {
 	
 	console.log(visible);
 }
+*/
 
 function LoadImageData () {
 	// For every category div in #data...
