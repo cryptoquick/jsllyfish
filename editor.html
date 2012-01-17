@@ -14,13 +14,14 @@
 </head>
 <body>
 <div id="container">
-	<div id="dropzone">
+	<div id="fileinput">
 		<form>
-			<input type="file" id="fileinput" name="files" onchange="processFiles()" multiple>Drag Image Folders Here</input>
+			<input type="file" id="fileinput" name="files" onchange="processFiles(evt)" multiple>Select Images</input>
 		</form>
 	</div>
 	<div id="filelist"><span>File List</span></div>
 	<div id="generate">Generate Thumbs and Gallery Index</div>
+	<div id="data"></div>
 </div>
 </body>
 </html>
