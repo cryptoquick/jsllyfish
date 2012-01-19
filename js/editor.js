@@ -10,6 +10,7 @@ function processFiles (evt) {
 	
 	for (var f in files) {
 		if (path = files[f].fileName) {
+			console.log(files[f]);
 			var img = new Image();
 			img.src = 'images/' + path;
 			img.name = path;
