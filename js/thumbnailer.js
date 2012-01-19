@@ -14,7 +14,8 @@ function lanczosCreate(lobes){
 }
 
 //elem: canvas element, img: image element, sx: scaled width, lobes: kernel radius
-function thumbnailer(elem, img, sx, lobes){ 
+function thumbnailer(elem, img, sx, lobes, cb){
+	this.callback = cb;
     this.canvas = elem;
     elem.width = img.width;
     elem.height = img.height;
@@ -96,4 +97,6 @@ thumbnailer.prototype.process2 = function(self){
     }
     self.ctx.putImageData(self.src, 0, 0);
     self.canvas.style.display = "block";
+	// Run callback. -Hunter
+	self.callback();
 }
