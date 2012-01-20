@@ -5,53 +5,43 @@
 	<script type="text/javascript" src="js/jquery.js"></script>
 	<script type="text/javascript" src="js/jquery.viewport.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
-	<script type="text/javascript">
-		var path = "images/";
-		var filename = "data.html";
-		
-		$(document).ready(Init);
-	</script>
+	<script type="text/javascript" src="js/thumbnailer.js"></script>
+	<script type="text/javascript" src="js/editor.js"></script>
 	<link href="styles/dark.css" rel="stylesheet" type="text/css">
+	<link href="styles/edit.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div id="container">
-	<div id="data">
-		<div>
-			<span>photos_1</span>
-			<p><span class="title">image 1</span><span class="file">4362163222_60d8344c59_o.jpg</span></p>
-			<p><span class="title">image 2</span><span class="file">4400108481_a2be77059e_o.jpg</span></p>
-			<p><span class="title">image 3</span><span class="file">4614301597_e292e97d6b_b.jpg</span></p>
-			<p><span class="title">image 4</span><span class="file">4614908994_47a11b1186_b.jpg</span></p>
-			<p><span class="title">image 5</span><span class="file">4638374830_9a94aeb3d6_o.jpg</span></p>
-			<p><span class="title">image 6</span><span class="file">4698579195_b3d7a1904d_b.jpg</span></p>
-			<p><span class="title">image 7</span><span class="file">4852681976_14c053128b_b.jpg</span></p>
-			<p><span class="title">image 8</span><span class="file">4852687278_305ef86b34_b.jpg</span></p>
-			<p><span class="title">image 9</span><span class="file">4940602671_2277a2f962_b.jpg</span></p>
-			<p><span class="title">image 10</span><span class="file">4940604639_7f8aa74db2_b.jpg</span></p>
-		</div>
-		<div>
-			<span>photos_2</span>
-			<p><span class="title">image 11</span><span class="file">5092207551_29bd355de2_b.jpg</span></p>
-			<p><span class="title">image 12</span><span class="file">5092873750_cc16b13431_b.jpg</span></p>
-			<p><span class="title">image 13</span><span class="file">5146847646_892224131a_b.jpg</span></p>
-			<p><span class="title">image 14</span><span class="file">5183481531_baa76eda79_b.jpg</span></p>
-			<p><span class="title">image 15</span><span class="file">5184078492_3271913d34_b.jpg</span></p>
-			<p><span class="title">image 16</span><span class="file">5197829578_49fde0383e_b.jpg</span></p>
-			<p><span class="title">image 17</span><span class="file">5257218548_f9f0de7af3_b.jpg</span></p>
-			<p><span class="title">image 18</span><span class="file">5294507250_767b48da92_b.jpg</span></p>
-			<p><span class="title">image 19</span><span class="file">5364143436_307bce2a65_b.jpg</span></p>
-			<p><span class="title">image 20</span><span class="file">5629516684_e0bfe178fd_b.jpg</span></p>
-		</div>
-	</div>
+	<div id="header" class="header"></div>
 	<div id="content">
-		<a href="#" id="title">No images in this gallery.</a>
+		<a href="#" id="title"></a>
 		<img></img>
 	</div>
-	<div id="selector">
-		<a href="#photos_1">photos 1</a>
-		<a href="#photos_2">photos 2</a>
-	</div>
+	<div id="selector"></div>
 	<div id="pusher"></div>
+	<script type="text/javascript">
+		var path = "images/";
+		var thumbsize = 100;
+		$(document).ready(Init);
+	</script>
+</div>
+<div id="editor">
+	<form>
+		<input type="file" id="fileinput" name="files[]" multiple></input>
+	</form>
+	<div id="status">Drop or select images using the area above</div>
+	<div id="generate">Generate thumbs (takes a while)</div>
+	<form id="mode">
+		<input checked="true" type="checkbox"></input>
+		Offline Mode (don't forget to save this page)
+	</form>
+</div>
+<div id="data">
+	<span id="imgnum">0</span> <!-- Number of Images -->
+	<span id="thumbshigh">0</span> <!-- Thumbstrip Height -->
+	<div id="uncategorized">
+		<span>Uncategorized</span>
+	</div>
 </div>
 </body>
 </html>

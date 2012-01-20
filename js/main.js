@@ -2,10 +2,9 @@ var head, content, desc;
 var curTop = 0;
 var images = [];
 var imgIDs = {};
-var thumbheight = 170;
 var thumbshigh = 0; // How many thumbnails high the window allows
 var visible = []; //9,10,11,12,13,14,15]; // Thumbs that are available in the header window.
-var thumbshigh = 0;
+var stripheight = 0;
 var headerHeight = 0;
 var activeHeader = 0;
 
@@ -14,21 +13,25 @@ function Init() {
 	$(window).scroll(Scroll);
 	$(window).click(Click);
 	
+	head = new Header(activeHeader);
+	content = new Content();
+	
 	LoadImageData();
 	
 	// Page height-related stuffs... TODO explain more
-	headerHeight += $(window).height() + thumbheight * images.length;
-	thumbshigh = Math.ceil(($(window).height() - 10) / thumbheight);
+	headerHeight = $(window).height() + stripheight;
+	// thumbshigh = $(window).height() + stripheight; //  - thumbsize + 10
 	
-	head = new Header(activeHeader);
-	content = new Content();
 	head.init();
 	content.init();
+	
+	Edit();
 }
 
 function Resize () {
 	content.size();
-	thumbshigh = Math.ceil(($(window).height() - 10) / thumbheight);
+	headerHeight = $(window).height() + stripheight;
+	$('#' + head.div).css('height', headerHeight + 'px');
 }
 
 function Click (evt) {
@@ -40,17 +43,13 @@ function Click (evt) {
 }
 
 var Header = function (num) {
-	this.div = 'head_' + num;
+	this.div = 'header';
 	
 	this.init = function () {
-		var d = $('<div>');
-		d.attr('id', this.div);
-		d.addClass('header');
-		d.css('height', headerHeight + 'px');
-		$('#container').prepend(d);
+		$('#header').css('height', headerHeight);
 		
 		// Populate full header with thumbs.
-		this.fill();
+		// this.fill();
 		
 	/*	for (var i = 0, ii = thumbshigh; i < ii; i++) {
 			visible.push(i);
@@ -60,7 +59,7 @@ var Header = function (num) {
 	
 	this.lastcat = '';
 	
-	this.fill = function () {
+/*	this.fill = function () {
 		for (var i = 0, ii = images.length; i < ii; i++) {
 			// Add category when appropriate.
 			var curcat = images[i].cat;
@@ -73,8 +72,8 @@ var Header = function (num) {
 			var p = $('<p>').attr('id', 'thumb_' + i).addClass('thumb');
 			
 			// Use this shadow technique: http://webdesignerwall.com/tutorials/css3-rounded-image-with-jquery
-			p.css('height', 130);
-			p.css('width', 130);
+			p.css('height', thumbsize);
+			p.css('width', thumbsize);
 			p.css('background-image', 'url("images/' + images[i].path + '")'); // thumbs TODO
 			p.css('background-repeat', 'no-repeat');
 			p.css('background-attachment', 'center');
@@ -89,7 +88,7 @@ var Header = function (num) {
 			// Add to the imgIDs dictionary.
 			imgIDs["thumb_" + i] = i;
 		}
-	}
+	}	*/
 	
 	this.addimg = function (idnum) {
 		var img = $('<img>').attr('id', "thumb_" + idnum);
@@ -131,7 +130,7 @@ var Content = function () {
 	
 	this.size = function () {
 		$('#content').css('height', ($(window).height() - 60));
-		$('#content').css('width', ($(window).width() - 200));
+		$('#content').css('width', ($(window).width() - 120));
 	//	Couldn't get this to vertically-center the image. Not sure if that's desired, anyway.
 	//	$('#content img').css('margin-top', -Math.floor(($(window).height() - 30) / 2));
 	//	$('#content img').css('top', '50%'); 
@@ -183,36 +182,39 @@ var changeImg = false;
 
 function Scroll () {
 	// Use jQuery viewport script to determine which thumb is in the viewport.
-	var topThumb = parseInt($(":in-viewport.thumb").attr('id').substr(6));
+	var top = $(":in-viewport.thumb").attr('id');
 	
-	// Image still at top
-	if (topThumb == curTop) {
-		changeImg = false;
-	}
-	// User scrolled down
-	else if (topThumb == (curTop + 1)) {
-		curTop++;
-		changeImg = true;
-	}
-	// User scrolled up
-	else if (topThumb == (curTop - 1)) {
-		curTop--;
-		changeImg = true;
-	}
-	// User scrolled fast!
-	else if (topThumb != curTop) {
-		for (var i = 0, ii = images.length; i < ii; i++) {
-			if (topThumb == i) {
-				curTop = i;
-				changeImg = true;
-				break;
+	if (top) {
+		var topThumb = parseInt(top.substr(6));
+		// Image still at top
+		if (topThumb == curTop) {
+			changeImg = false;
+		}
+		// User scrolled down
+		else if (topThumb == (curTop + 1)) {
+			curTop++;
+			changeImg = true;
+		}
+		// User scrolled up
+		else if (topThumb == (curTop - 1)) {
+			curTop--;
+			changeImg = true;
+		}
+		// User scrolled fast!
+		else if (topThumb != curTop) {
+			for (var i = 0, ii = images.length; i < ii; i++) {
+				if (topThumb == i) {
+					curTop = i;
+					changeImg = true;
+					break;
+				}
 			}
 		}
-	}
-	
-	if (changeImg) {
-		content.setImage(curTop);
-		changeImg = false;
+		
+		if (changeImg) {
+			content.setImage(curTop);
+			changeImg = false;
+		}
 	}
 }
 /*
@@ -267,16 +269,40 @@ function updateHeader () {
 }
 */
 
+var lastcat = '';
+
 function LoadImageData () {
+	var index = 0;
+	images = [];
+	
+	stripheight = parseInt($('#thumbshigh').text());
+	
 	// For every category div in #data...
 	$('#data div').each(function() {
 		// get its category name...
 		var cat = $('> span', this).text();
+		
+		// Add category to selector and head, when necessary.
+		if (lastcat != cat) {
+			head.addcat(cat, index);
+			
+			var catsel = $('<a>');
+			catsel.attr('href', '#' + cat);
+			catsel.text(cat.replace(' ','_'));
+			$('#selector').append(catsel);
+			
+			lastcat = cat;
+		}
+		
 		// for every cat, push the rest of the information held in each span.
 		$('> p' , this).each(function () {
 			var path = $('.file', this).text();
 			var title = $('.title', this).text();
+			imgIDs["thumb_" + index] = index;
 			images.push({cat: cat, path: path, title: title, info: "blaarbl"});
+			index++;
 		});
 	});
+	
+	Resize();
 }
