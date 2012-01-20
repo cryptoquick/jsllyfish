@@ -5,6 +5,11 @@ body, html {
 	height: 100%;
 	font-family: sans-serif;
 	color: white;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
 }
 
 p {margin: 0px;}
@@ -27,7 +32,7 @@ p {margin: 0px;}
 	border: 2px dashed orange;
 	border-radius: 10px;
 	width: 500px;
-	height: 300px;
+	height: 20px;
 	background-repeat: repeat;
 	background-position: center center;
 	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEBAMAAABb34NNAAAAG1BMVEUREBATERHd7h7d7h7d7h7d7h4TEREiHx8wLi6iBqetAAAAFElEQVQImWNIaGco42BoT2DgKAMAEgMCy2+9SQQAAAAASUVORK5CYII=);

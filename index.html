@@ -31,10 +31,14 @@
 	</form>
 	<div id="status">Drop or select images using the area above</div>
 	<div id="generate">Generate thumbs (takes a while)</div>
-	<form id="mode">
-		<input checked="true" type="checkbox"></input>
-		Offline Mode (don't forget to save this page)
+	<form id="mode" style="text-align: left;">
+		<input id="seloff" checked="true" type="checkbox"></input>
+		<span id="seloffsp">Offline Mode (don't forget to save this page)</span><br><br>
+		<span>Modify Selected:</span><br>
+		<input id="selname" type="text" value="none"></input><br>
+		<input id="seldel" type="button" value="Remove none"></input>
 	</form>
+	<a id="logo" style="text-decoration: underline;" href="http://code.google.com/p/jsllyfish/">jsllyfish v0.2</a>
 </div>
 <div id="data">
 	<span id="imgnum">0</span> <!-- Number of Images -->

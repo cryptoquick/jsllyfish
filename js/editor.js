@@ -1,5 +1,10 @@
+var offline = true;
+var curselect = '';
+
 function Edit () {
 	$('#generate').click(processFiles);
+	
+	// Generate button effects.
 	$('#generate').hover(
 		function () {
 			$(this).css('background-color', 'orange');
@@ -8,6 +13,59 @@ function Edit () {
 			$(this).css('background-color', '#666');
 		}
 	);
+	
+	// Toggle Offline Mode from checkbox.
+	$('#seloff').click(function () {
+		if (offline)
+			offline = false;
+		else
+			offline = true;
+	});
+	
+	// Toggle Offline Mode from text.
+	$('#seloffsp').click(function () {
+		if (offline) {
+			offline = false;
+			$('#seloff').attr('checked', false);
+		}
+		else {
+			offline = true;
+			$('#seloff').attr('checked', true);
+		}
+	});
+	
+	$('.thumbcat').click(function () {
+		$('#selname').attr('value', $(this).text());
+		$('#seldel').attr('value', 'Remove ' + $(this).text());
+		$('#' + $(this).text()).css('border', '1px solid orange');
+		curselect = $(this).text().replace(' ', '_');
+	});
+	
+	$('#selname').keypress(function(evt) {
+		if (evt.keyCode == 13) {
+			// Prevent enter key from submitting.
+			evt.preventDefault();
+			
+			var input = $(this).attr('value');
+			
+			$('#' + curselect).css('border', 'none');
+			
+			// Found element with id.
+			if ($('#' + input.replace(' ','_')).length != 0) {
+				alert('Category name, "' + input + '" already used.');
+			}
+			// Didn't find element with id.
+			else {
+				$('#' + curselect).text(input).attr('id', input.replace(' ', '_'));
+			//	$('#' + $(this).attr('value').replace(' ','_'));
+			}
+			
+			$('#seldel').attr('value', 'Remove none');
+			$(this).attr('value', 'none');
+			
+			curselect = 'none';
+		}
+	});
 }
 
 var total = 0;
@@ -30,6 +88,7 @@ function toggleGenerate (index) {
 	else {
 		$('#generate').text('Generate more thumbs.');
 		$('#status').text('Complete!');
+		$('#fileinput').each(function() {this.form.reset();})
 	}
 }
 
@@ -63,7 +122,7 @@ function resizeFile (files, index) {
 				var canvas = document.createElement("canvas");
 				var thumber = new thumbnailer(canvas, this, thumbsize, 5, function () {
 				var thumbdata = canvas.toDataURL();
-				addThumb(thumbdata, index, thumber.dest.height, theFile.fileName);
+				addThumb(thumbdata, thumber.dest.height, theFile.fileName);
 				/*	var thumbimg = new Image();
 					thumbimg.src = canvas.toDataURL();
 					thumbimg.onload = function () {
@@ -112,12 +171,14 @@ function resizeFile (files, index) {
 
 var tempThumbsHigh = 0;
 
-function addThumb (imgdata, index, height, path) {
+function addThumb (imgdata, height, path) {
 /*	var curcat = images[i].cat;
 	if (head.lastcat != curcat) {
 		head.addcat(curcat, i);
 		head.lastcat = curcat;
 	}	*/
+	
+	var index = parseInt($('#imgnum').text());
 	
 	// Create each thumb element.
 	var p = $('<p>').attr('id', 'thumb_' + index).addClass('thumb');
@@ -138,6 +199,8 @@ function addThumb (imgdata, index, height, path) {
 	var p = $('<p>');
 	var ti = $('<span>');
 	var fi = $('<span>');
+	
+	p.attr('id', 'data_' + index);
 	
 	ti.addClass('title');
 	ti.text(path);
