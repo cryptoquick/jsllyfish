@@ -19,8 +19,10 @@ function Edit () {
 	
 	// Toggle Offline Mode from checkbox.
 	$('#seloff').click(function () {
-		if (offline)
+		if (offline) {
 			offline = false;
+			$('#editor').css('display', 'none');
+		}
 		else
 			offline = true;
 	});
@@ -30,6 +32,7 @@ function Edit () {
 		if (offline) {
 			offline = false;
 			$('#seloff').attr('checked', false);
+			$('#editor').css('display', 'none');
 		}
 		else {
 			offline = true;
@@ -68,6 +71,14 @@ function Edit () {
 			$(this).attr('value', 'none');
 			
 			curselect = 'none';
+		}
+	});
+	
+	$(window).keypress(function(evt) {
+		if (evt.keyCode === 96 && !offline) {
+			offline = true;
+			$('#seloff').attr('checked', true);
+			$('#editor').css('display', 'block');
 		}
 	});
 }
