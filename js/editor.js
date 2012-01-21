@@ -42,10 +42,12 @@ function Edit () {
 	
 	// Category renaming.
 	$('.thumbcat').click(function () {
-		$('#selname').attr('value', $(this).text());
-		$('#seldel').attr('value', 'Remove ' + $(this).text());
-		$('#' + $(this).text()).css('border', '1px solid orange');
-		curselect = $(this).text().replace(' ', '_');
+		if (offline) {
+			$('#selname').attr('value', $(this).text());
+			$('#seldel').attr('value', 'Remove ' + $(this).text());
+			$('#' + $(this).text()).css('border', '1px solid orange');
+			curselect = $(this).text().replace(' ', '_');
+		}
 	});
 	
 	$('#selname').keypress(function(evt) {
@@ -75,7 +77,12 @@ function Edit () {
 	});
 	
 	$(window).keypress(function(evt) {
-		if (evt.keyCode === 96 && !offline) {
+		if (evt.keyCode === 96 && offline) {
+			offline = false;
+			$('#seloff').attr('checked', false);
+			$('#editor').css('display', 'none');
+		}
+		else if (evt.keyCode === 96 && !offline) {
 			offline = true;
 			$('#seloff').attr('checked', true);
 			$('#editor').css('display', 'block');
