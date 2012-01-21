@@ -11,7 +11,6 @@ var activeHeader = 0;
 function Init() {
 	$(window).resize(Resize);
 	$(window).scroll(Scroll);
-	$(window).click(Click);
 	
 	head = new Header(activeHeader);
 	content = new Content();
@@ -34,14 +33,33 @@ function Resize () {
 	$('#' + head.div).css('height', headerHeight + 'px');
 }
 
+function AddClick () {
+	// Thumb Click handler.
+	$('.thumb').click(function () {
+		// Standard click functionality from main.js
+		console.log(imgIDs[$(this).attr('id')]);
+		content.setImage(imgIDs[$(this).attr('id')]);
+		document.location.href = '#' + $(this).attr('id');
+		
+		// Renaming.
+		if (offline) {
+			$('#selname').attr('value', $(this).text());
+			$('#seldel').attr('value', 'Remove ' + $(this).text());
+			$('#' + $(this).text()).css('border', '1px solid orange');
+			curselect = $(this).text().replace(' ', '_');
+		}
+	});
+}
+
+/*
 function Click (evt) {
-	if (evt.target.className == 'thumb' || evt.target.className == 'thumbimg') {
+	if (evt.target.className == 'thumb') {
 		console.log(imgIDs[evt.target.id]);
 		content.setImage(imgIDs[evt.target.id]);
 		document.location.href = '#' + evt.target.id;
 	}
 }
-
+*/
 var Header = function (num) {
 	this.div = 'header';
 	
@@ -129,11 +147,11 @@ var Content = function () {
 	}
 	
 	this.size = function () {
-		$('#content').css('height', ($(window).height() - 60));
-		$('#content').css('width', ($(window).width() - 120));
+		$('#content').css('height', ($(window).height() - 75));
+		$('#content').css('width', ($(window).width() - 150));
 	//	Couldn't get this to vertically-center the image. Not sure if that's desired, anyway.
 	//	$('#content img').css('margin-top', -Math.floor(($(window).height() - 30) / 2));
-	//	$('#content img').css('top', '50%'); 
+	//	$('#content img').css('top', '50%');
 		$('#content img').css('max-height', $('#content').height());
 		$('#content img').css('max-width', $('#content').width());
 		
@@ -149,7 +167,22 @@ var Content = function () {
 				$(this).remove()
 				
 				var img = $('<img>');
-				img.attr('src', path + images[index].path);
+				
+				// Offline mode reads locally.
+				if (offline) {
+					var f = offFiles[index];
+					var reader = new FileReader();
+					reader.onload = (function (file) {
+						return function (evt) {
+							img.attr('src', evt.target.result);
+						};
+					})(f);
+					reader.readAsDataURL(f);
+				}
+				else {
+					img.attr('src', path + images[index].path);
+				}
+				
 				img.attr('title', images[index].title);
 				
 				img.css('max-height', $('#content').height());

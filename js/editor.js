@@ -1,7 +1,10 @@
 var offline = true;
 var curselect = '';
+var offFiles = [];
+var highQuality = false;
 
 function Edit () {
+	// Generate thumbs.
 	$('#generate').click(processFiles);
 	
 	// Generate button effects.
@@ -34,6 +37,7 @@ function Edit () {
 		}
 	});
 	
+	// Category renaming.
 	$('.thumbcat').click(function () {
 		$('#selname').attr('value', $(this).text());
 		$('#seldel').attr('value', 'Remove ' + $(this).text());
@@ -52,7 +56,7 @@ function Edit () {
 			
 			// Found element with id.
 			if ($('#' + input.replace(' ','_')).length != 0) {
-				alert('Category name, "' + input + '" already used.');
+				alert('Name, "' + input + '" already used. Nothing changed.');
 			}
 			// Didn't find element with id.
 			else {
@@ -74,12 +78,20 @@ var processing = false;
 function processFiles () {
 	if (!processing) {
 		var files = document.getElementById('fileinput').files;
+		
+		if (offline) {
+			for (var f in files) {
+				offFiles.push(files[f]);
+			}
+		}
+		
 		processing = true;
 		toggleGenerate(0);
 		setTimeout(resizeFile, 0, files, 0);
 	}
 }
 
+// Clear file values when appropriate, and changes the status div when necessary.
 function toggleGenerate (index) {
 	if (processing) {
 		$('#generate').text('Generating thumbnails...');
@@ -88,7 +100,7 @@ function toggleGenerate (index) {
 	else {
 		$('#generate').text('Generate more thumbs.');
 		$('#status').text('Complete!');
-		$('#fileinput').each(function() {this.form.reset();})
+	//	$('#fileinput').each(function() {this.form.reset();})
 	}
 }
 
@@ -120,21 +132,45 @@ function resizeFile (files, index) {
 			img = new Image();
 			img.onload = function () {
 				var canvas = document.createElement("canvas");
-				var thumber = new thumbnailer(canvas, this, thumbsize, 5, function () {
-				var thumbdata = canvas.toDataURL();
-				addThumb(thumbdata, thumber.dest.height, theFile.fileName);
-				/*	var thumbimg = new Image();
-					thumbimg.src = canvas.toDataURL();
-					thumbimg.onload = function () {
-					//	$('#filelist').append(thumbimg);
+				var thumber, thumbdata;
+				if (highQuality) {
+					thumber = new thumbnailer(canvas, this, thumbsize, 3, function () {
+						thumbdata = canvas.toDataURL();
 						
-					}*/
-				total += thumbdata.length;
-				console.log(index);
-				index++;
-				toggleGenerate(index);
-				setTimeout(resizeFile, 0, files, index);
-			});
+						total += thumbdata.length;
+						console.log(index);
+						index++;
+						toggleGenerate(index);
+						
+						addThumb(thumbdata, thumber.dest.height, theFile.fileName);
+						
+						setTimeout(resizeFile, 0, files, index);
+					});
+				}
+				else {
+					canvas.width = thumbsize;
+					canvas.height = Math.round(this.height * thumbsize / this.width);
+					var ctx = canvas.getContext("2d");
+					ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+					thumbdata = canvas.toDataURL('image/jpeg');
+					
+					total += thumbdata.length;
+					console.log(index);
+					index++;
+					toggleGenerate(index);
+					
+					addThumb(thumbdata, canvas.height, theFile.fileName);
+					
+					setTimeout(resizeFile, 0, files, index);
+				}
+					
+					/*	var thumbimg = new Image();
+						thumbimg.src = canvas.toDataURL();
+						thumbimg.onload = function () {
+						//	$('#filelist').append(thumbimg);
+							
+						}*/
+		//	});			///////
 			//	console.log(thumber.src);
 			//	this.src = thumber.src;
 				
@@ -151,7 +187,7 @@ function resizeFile (files, index) {
 			};
 		//	spimg.setAttribute('src', e.target.result);
 			img.src = e.target.result;
-		};
+		}
 	})(f);
 	
 	reader.readAsDataURL(f);
@@ -219,5 +255,8 @@ function addThumb (imgdata, height, path) {
 	$('#imgnum').text(index + 1);
 	$('#thumbshigh').text(tempThumbsHigh);
 	
+	AddClick();
 	LoadImageData();
+	
+	content.setImage(index);
 }
