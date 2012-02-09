@@ -160,7 +160,7 @@ function resizeFile (files, index) {
 						index++;
 						toggleGenerate(index);
 						
-						addThumb(thumbdata, thumber.dest.height, theFile.fileName);
+						addThumb(thumbdata, thumber.dest.height, theFile.name);
 						
 						setTimeout(resizeFile, 0, files, index);
 					});
@@ -168,7 +168,9 @@ function resizeFile (files, index) {
 				else {
 					canvas.width = thumbsize;
 					canvas.height = Math.round(this.height * thumbsize / this.width);
-					var ctx = canvas.getContext("2d");
+					var ctx = canvas.getContext('2d');
+					ctx.fillStyle = '#555';
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
 					ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 					thumbdata = canvas.toDataURL('image/jpeg');
 					
@@ -176,8 +178,8 @@ function resizeFile (files, index) {
 					console.log(index);
 					index++;
 					toggleGenerate(index);
-					
-					addThumb(thumbdata, canvas.height, theFile.fileName);
+					console.log(theFile);
+					addThumb(thumbdata, canvas.height, theFile.name);
 					
 					setTimeout(resizeFile, 0, files, index);
 				}

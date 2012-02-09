@@ -25,6 +25,7 @@ function Init() {
 	content.init();
 	
 	Edit();
+	AddClick();
 }
 
 function Resize () {
