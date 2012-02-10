@@ -1,8 +1,25 @@
 $(window).load(function () {
 	var Jsllyfish = function () {
+		this.imageData = [];
+		this.baseUrl = '';
+		
 		this.init = function () {
+			jslly.parseData();
+			jslly.addThumb(0);
 			jslly.makeThumbs();
 		};
+		
+		this.parseData = function () {
+			$('#data ul').each(function (index) {
+				var $li = $(' li:first', this);
+				jslly.imageData.push({
+					title: $li.text(),
+					url: $li.next().text()
+				});
+			});
+			
+			this.baseUrl = $('#data p').text();
+		}
 		
 		this.makeThumbs = function () {
 			// Buttons on thumbs
@@ -16,9 +33,46 @@ $(window).load(function () {
 					$('> div button', this).button('disable');
 				}
 			);
-			console.log('arhbl!');
+			
+			// Buttons & button icons
+			$('.jslly-thumb-remove').button({
+				icons: {
+					primary: 'ui-icon-trash'
+				},
+				text: false
+			});
+	
+			$('.jslly-thumb-zoom').button({
+				icons: {
+					primary: 'ui-icon-zoomin'
+				},
+				text: false
+			});
+		}
+		
+		this.addThumb = function (index) {
+			// Build thumbnail from scratch
+			var imgdata = jslly.imageData[index];
+			var imgurl = jslly.baseUrl + imgdata.url;
+			
+			var $li = $('<li>');
+			var $h5 = $('<h5>')
+				.addClass('ui-widget-header')
+				.text(imgdata.title);
+			var $div = $('<div>')
+				.addClass('jslly-thumb-buttons')
+				.css('background-image', 'url("' + imgurl + '")');
+			var $button1 = $('<button>').addClass('jslly-thumb-remove');
+			var $button2 = $('<button>').addClass('jslly-thumb-zoom');
+			
+			$li.append($h5);
+			$div.append($button1).append($button2);
+			$li.append($div);
+			
+			$('#gallery').append($li);
 		}
 	};
+	
 	window.jslly = new Jsllyfish();
 	window.jslly.init();
 });
@@ -111,22 +165,6 @@ $(function() {
 			}, 1 );
 		}
 	}
-	
-	
-	// jsllyfish
-	$('.jslly-thumb-remove').button({
-		icons: {
-			primary: 'ui-icon-trash'
-		},
-		text: false
-	});
-	
-	$('.jslly-thumb-zoom').button({
-		icons: {
-			primary: 'ui-icon-zoomin'
-		},
-		text: false
-	});
 	
 	// resolve the icons behavior with event delegation
 	$( "ul.gallery > li" ).click(function( event ) {

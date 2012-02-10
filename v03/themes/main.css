@@ -18,3 +18,9 @@ body { background-color: #eee; }
 	height: 50px;
 	padding-top: 22px;
 }
+
+.jslly-thumb-buttons button {
+	height: 2.4em;
+}
+
+#data { display: none; }
