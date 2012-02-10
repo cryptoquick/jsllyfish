@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>jQuery UI Droppable - Simple photo manager</title>
+	<link rel="stylesheet" href="themes/base/jquery.ui.all.css">
+	<script src="js/jquery-1.7.1.js"></script>
+	<script src="js/ui/jquery.ui.position.js"></script>
+	<script src="js/ui/jquery.ui.core.js"></script>
+	<script src="js/ui/jquery.ui.widget.js"></script>
+	<script src="js/ui/jquery.ui.mouse.js"></script>
+	<script src="js/ui/jquery.ui.draggable.js"></script>
+	<script src="js/ui/jquery.ui.droppable.js"></script>
+	<script src="js/ui/jquery.ui.resizable.js"></script>
+	<script src="js/ui/jquery.ui.dialog.js"></script>
+	<script src="js/ui/jquery.ui.button.js"></script>
+	
+	<script src="js/main.js"></script>
+	
+	<link rel="stylesheet" href="themes/base.css">
+	<link rel="stylesheet" href="themes/main.css">
+</head>
+<body>
+
+<div id="switcher"></div>
+<script type="text/javascript" src="http://jqueryui.com/themeroller/themeswitchertool/"></script>
+
+<div class="demo ui-widget ui-helper-clearfix">
+
+<ul id="gallery" class="gallery ui-helper-reset ui-helper-clearfix">
+	<li>
+		<h5 class="ui-widget-header">High Tatras</h5>
+		<img src="images/high_tatras_min.jpg" alt="The peaks of High Tatras" width="96" height="72" />
+		<a href="images/high_tatras.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+		<a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
+	</li>
+	<li class="ui-widget-content ui-corner-tr">
+		<h5 class="ui-widget-header">High Tatras 2</h5>
+		<img src="images/high_tatras2_min.jpg" alt="The chalet at the Green mountain lake" width="96" height="72" />
+		<a href="images/high_tatras2.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+		<a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
+	</li>
+	<li class="ui-widget-content ui-corner-tr">
+		<h5 class="ui-widget-header">High Tatras 3</h5>
+		<img src="images/high_tatras3_min.jpg" alt="Planning the ascent" width="96" height="72" />
+		<a href="images/high_tatras3.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+		<a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
+	</li>
+	<li>
+		<h5 class="ui-widget-header">High Tatras 4</h5>
+		<img src="images/high_tatras4_min.jpg" alt="On top of Kozi kopka" width="96" height="72" />
+		<div class="jslly-thumb-buttons">
+			<button class="jslly-thumb-zoom">View larger image</button>
+			<button class="jslly-thumb-remove">Remove this image</button>
+		</div>
+	</li>
+</ul>
+
+<div id="trash" class="ui-widget-content ui-state-default">
+	<h4 class="ui-widget-header"><span class="ui-icon ui-icon-plus">Add Images</span> Add Images</h4>
+</div>
+
+</div><!-- End demo -->
+
+
+<div class="demo-description">
+<p>You can delete an image either by dragging it to the Trash or by clicking the trash icon.</p>
+<p>You can "recycle" an image by dragging it back to the gallery or by clicking the recycle icon.</p>
+<p>You can view larger image by clicking the zoom icon. jQuery UI dialog widget is used for the modal window.</p>
+</div><!-- End demo-description -->
+
+</body>
+</html>
